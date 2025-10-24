@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Match Predictor (Offline)</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(180deg, #001f3f, #003366);
+    color: white;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    margin-top: 30px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+  input, button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin: 8px 0;
+    font-size: 16px;
+  }
+  button {
+    background: #00bcd4;
+    color: #001f3f;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #00acc1;
+  }
+  .result {
+    margin-top: 15px;
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 8px;
+  }
+  .bar {
+    height: 18px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00e676, #1de9b6);
+    width: 0%;
+    transition: width 1s;
+  }
+  .disclaimer {
+    font-size: 12px;
+    color: #ffccbc;
+    margin-top: 15px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>⚽ Football Match Predictor</h1>
+  <div class="card">
+    <label>Enter Team 1</label>
+    <input type="text" id="team1" placeholder="e.g., Barcelona">
+
+    <label>Enter Team 2</label>
+    <input type="text" id="team2" placeholder="e.g., Real Madrid">
+
+    <button onclick="predict()">Predict Winner</button>
+
+    <div id="output" class="result" style="display:none;">
+      <h3>Prediction Result</h3>
+      <p id="summary"></p>
+      <div class="bar"><div class="fill" id="bar1"></div></div>
+      <p id="prob1"></p>
+      <div class="bar"><div class="fill" id="bar2" style="background: linear-gradient(90deg,#ff4081,#f50057);"></div></div>
+      <p id="prob2"></p>
+      <p class="disclaimer">
+        This is a fun offline prediction tool using simulated stats. It cannot guarantee accuracy or betting success.
+      </p>
+    </div>
+  </div>
+
+<script>
+function simulateTeamStats(teamName) {
+  // Random realistic stats for simulation
+  return {
+    attack: Math.random() * 100,
+    defense: Math.random() * 100,
+    form: Math.random() * 100,
+    morale: Math.random() * 100
+  };
+}
+
+function predict() {
+  const t1 = document.getElementById("team1").value.trim();
+  const t2 = document.getElementById("team2").value.trim();
+
+  if (!t1 || !t2) {
+    alert("Please enter both team names.");
+    return;
+  }
+
+  const team1 = simulateTeamStats(t1);
+  const team2 = simulateTeamStats(t2);
+
+  // Weighted model: attack (40%), defense (25%), form (25%), morale (10%)
+  const score1 = (team1.attack * 0.4) + (team1.defense * 0.25) + (team1.form * 0.25) + (team1.morale * 0.1);
+  const score2 = (team2.attack * 0.4) + (team2.defense * 0.25) + (team2.form * 0.25) + (team2.morale * 0.1);
+
+  const total = score1 + score2;
+  const prob1 = (score1 / total) * 100;
+  const prob2 = (score2 / total) * 100;
+
+  const winner = prob1 > prob2 ? t1 : t2;
+  const confidence = Math.abs(prob1 - prob2).toFixed(1);
+
+  document.getElementById("output").style.display = "block";
+  document.getElementById("summary").innerHTML = 
+    `<strong>${winner}</strong> is more likely to win with ${confidence}% confidence.`;
+
+  document.getElementById("bar1").style.width = prob1.toFixed(1) + "%";
+  document.getElementById("bar2").style.width = prob2.toFixed(1) + "%";
+
+  document.getElementById("prob1").innerText = `${t1}: ${prob1.toFixed(1)}%`;
+  document.getElementById("prob2").innerText = `${t2}: ${prob2.toFixed(1)}%`;
+}
+</script>
+</body>
+</html>
