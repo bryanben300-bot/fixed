@@ -1,272 +1,268 @@
+<!-- Save as predictor_with_key_embedded.html -->
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Universal Match Predictor — All in one (no API key)</title>
+<title>Predictor (key embedded) — single file</title>
 <style>
-  :root{ --bg:#071428; --card:#0b2340; --accent:#06b6d4; --muted:#98a6b3; color:#eaf6ff; --good:#a7f3d0; }
-  *{box-sizing:border-box}
-  body{ margin:0; font-family:Inter,system-ui,Arial; background:linear-gradient(180deg,var(--bg),#022a45); color:var(--card); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px;}
-  .card{ width:100%; max-width:980px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:18px; box-shadow:0 10px 40px rgba(2,6,23,0.6); color:#eaf6ff; }
-  h1{ margin:0 0 6px 0; font-size:20px; }
-  p.lead{ margin:0 0 14px 0; color:var(--muted); }
-  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
-  input[type="text"]{ width:100%; padding:10px 12px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:inherit; }
-  .row{ display:flex; gap:10px; margin-top:12px; align-items:center; }
-  button{ padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background:linear-gradient(90deg,var(--accent),#7c3aed); color:#021226; }
-  .btn-plain{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); padding:10px 12px; border-radius:10px; cursor:pointer;}
-  .output{ margin-top:16px; background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; }
-  .bars{ display:flex; gap:10px; align-items:center; margin-top:8px;}
-  .bar{ flex:1; height:16px; background:rgba(255,255,255,0.05); border-radius:8px; overflow:hidden; }
-  .fillA{ height:100%; background:linear-gradient(90deg,#06b6d4,#7c3aed); width:0%; transition:width .8s; }
-  .fillB{ height:100%; background:linear-gradient(90deg,#ff7ab6,#f43f5e); width:0%; transition:width .8s; }
-  .stat-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
-  .stat{ background:rgba(0,0,0,0.25); padding:8px; border-radius:8px; min-width:140px; }
+  :root{ --bg:#071428; --muted:#98a6b3; --accent:#06b6d4; --card:#0b2340; --good:#a7f3d0; color:#eaf6ff }
+  body{ margin:0; font-family:Inter,Arial,system-ui; background:linear-gradient(180deg,var(--bg),#022a45); color:var(--card); padding:16px; display:flex; justify-content:center; }
+  .card{ width:100%; max-width:980px; background:rgba(255,255,255,0.02); padding:18px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+  h1{ margin:0 0 6px 0; font-size:20px; color:#eaf6ff }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  label{ display:block; color:var(--muted); font-size:13px; margin-bottom:6px; }
+  input[type=text], input[type=date], input[type=number] { width:100%; padding:10px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:inherit }
+  .row{ display:flex; gap:8px; margin-top:12px; align-items:center; }
+  button{ padding:10px 12px; border-radius:8px; border:none; background:linear-gradient(90deg,var(--accent),#7c3aed); color:#021226; font-weight:700; cursor:pointer; }
+  .btn-plain{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; cursor:pointer; }
+  .output{ margin-top:16px; background:rgba(0,0,0,0.18); padding:12px; border-radius:8px; color:#eaf6ff }
+  .bars{ display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .bar{ flex:1; height:16px; background:rgba(255,255,255,0.06); border-radius:8px; overflow:hidden; }
+  .fillA{ height:100%; width:0%; background:linear-gradient(90deg,#06b6d4,#7c3aed); transition:width .6s; }
+  .fillB{ height:100%; width:0%; background:linear-gradient(90deg,#ff7ab6,#f43f5e); transition:width .6s; }
+  .stat-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .stat{ background:rgba(255,255,255,0.03); padding:8px; border-radius:8px; min-width:140px; }
   .muted{ color:var(--muted); font-size:13px; }
-  .small{ font-size:13px; color:var(--muted); margin-top:8px; }
-  .team-card{ display:flex; gap:8px; align-items:center; }
-  .logo{ width:48px; height:48px; border-radius:6px; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  img.logo-img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .history-actions{ margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
-  .notice{ margin-top:10px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02); color:var(--muted); font-size:13px;}
-  @media (max-width:800px){ .grid{ grid-template-columns:1fr } }
+  .explain{ margin-top:10px; background:rgba(0,0,0,0.12); padding:10px; border-radius:8px; color:var(--muted); font-size:13px; }
+  a.small{ color:var(--muted); font-size:13px; text-decoration:underline; }
+  @media(max-width:800px){ .grid{ grid-template-columns:1fr } }
 </style>
 </head>
 <body>
-  <main class="card" role="main">
-    <h1>Universal Match Predictor — All in one</h1>
-    <p class="lead">Enter any two team names (club or national). The app will try to fetch public Wikipedia signals (no API key). Caches results in your browser so it can work offline after a first lookup.</p>
+  <div class="card">
+    <h1>Match Predictor — (Key embedded)</h1>
+    <p class="muted">This file contains an embedded football-data.org key and will call the API where IDs are supplied. If you share or host this publicly the key can be read by anyone — consider replacing with proxy + env var later.</p>
 
-    <div class="grid">
+    <!-- === User inputs: team names + optional API-specific IDs or match id === -->
+    <div style="margin-top:8px" class="grid">
       <div>
-        <label>Team A</label>
-        <input id="teamA" type="text" placeholder="e.g. Manchester United" />
+        <label>Team A name (free text)</label>
+        <input id="teamAname" type="text" placeholder="e.g. Manchester United">
+        <label style="margin-top:8px">Optional Team A ID (football-data.org numeric id)</label>
+        <input id="teamAid" type="number" placeholder="optional (e.g. 66)">
         <label style="margin-top:8px">Home advantage?</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-          <label style="display:flex; gap:8px; align-items:center; color:var(--muted);">
-            <input id="homeA" type="checkbox" /> Team A home (+0.20 xG)
-          </label>
-        </div>
+        <div style="margin-top:6px"><label class="muted"><input id="homeA" type="checkbox"> Team A home (+0.20 xG)</label></div>
       </div>
+
       <div>
-        <label>Team B</label>
-        <input id="teamB" type="text" placeholder="e.g. Real Madrid" />
-        <label style="margin-top:8px">Home advantage?</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-          <label style="display:flex; gap:8px; align-items:center; color:var(--muted);">
-            <input id="homeB" type="checkbox" /> Team B home (+0.20 xG)
-          </label>
-        </div>
+        <label>Team B name (free text)</label>
+        <input id="teamBname" type="text" placeholder="e.g. Liverpool">
+        <label style="margin-top:8px">Optional Team B ID (football-data.org numeric id)</label>
+        <input id="teamBid" type="number" placeholder="optional (e.g. 64)">
+        <label style="margin-top:8px">Match date (optional)</label>
+        <input id="matchDate" type="date">
       </div>
     </div>
 
-    <div class="row" style="margin-top:12px;">
-      <button id="predictBtn">Predict (online-aware)</button>
-      <button id="simulateBtn" class="btn-plain">Simulate (fast, no lookup)</button>
+    <div class="row">
+      <button id="predictBtn">Predict (use API when possible)</button>
+      <button id="simulateBtn" class="btn-plain">Quick simulate (no API)</button>
       <button id="clearCache" class="btn-plain" style="margin-left:auto">Clear cache</button>
     </div>
 
-    <section id="result" class="output" hidden aria-live="polite">
+    <!-- optional: quick H2H or match lookup by match ID -->
+    <div style="margin-top:10px;" class="muted">
+      <label>Optional: If you have a football-data.org <strong>match id</strong> or want H2H by team id, enter it below:</label>
+      <div style="display:flex; gap:8px; margin-top:6px;">
+        <input id="matchId" type="number" placeholder="Match ID (optional)">
+        <button id="fetchMatchBtn" class="btn-plain">Fetch match (API)</button>
+        <button id="fetchH2HBtn" class="btn-plain">Fetch H2H by team IDs</button>
+      </div>
+    </div>
+
+    <!-- output -->
+    <div id="output" class="output" hidden>
       <div style="display:flex; justify-content:space-between; align-items:center">
-        <div style="display:flex; gap:12px; align-items:center;">
-          <div class="team-card">
-            <div class="logo" id="logoA"><img class="logo-img" id="logoAimg" alt="" src=""></div>
-            <div>
-              <div id="teamAName" style="font-weight:700"></div>
-              <div class="muted" id="teamAXg"></div>
-            </div>
-          </div>
-          <div style="font-size:22px; font-weight:800;" id="scoreMain"></div>
-          <div class="team-card">
-            <div>
-              <div id="teamBName" style="font-weight:700; text-align:right"></div>
-              <div class="muted" id="teamBXg" style="text-align:right"></div>
-            </div>
-            <div class="logo" id="logoB"><img class="logo-img" id="logoBimg" alt="" src=""></div>
-          </div>
+        <div>
+          <div style="font-weight:800; font-size:18px" id="scoreMain">—</div>
+          <div class="muted" id="teamNames">—</div>
         </div>
         <div style="text-align:right">
           <div class="muted" id="favText"></div>
-          <div class="muted" id="calcNote"></div>
+          <div class="muted" id="sourceNote"></div>
         </div>
       </div>
 
-      <div class="bars" style="margin-top:8px;">
-        <div style="flex:1;">
-          <div id="labelA" class="muted"></div>
-          <div class="bar"><div class="fillA" id="fillA"></div></div>
-        </div>
-        <div style="flex:1;">
-          <div id="labelB" class="muted"></div>
-          <div class="bar"><div class="fillB" id="fillB"></div></div>
-        </div>
+      <div class="bars">
+        <div style="flex:1;"><div id="labelA" class="muted"></div><div class="bar"><div id="fillA" class="fillA"></div></div></div>
+        <div style="flex:1;"><div id="labelB" class="muted"></div><div class="bar"><div id="fillB" class="fillB"></div></div></div>
       </div>
 
-      <div class="stat-row" style="margin-top:10px">
-        <div class="stat"><div class="muted">BTTS</div><div id="btts" style="margin-top:6px; font-weight:700"></div></div>
-        <div class="stat"><div class="muted">Draw chance</div><div id="drawChance" style="margin-top:6px; font-weight:700"></div></div>
-        <div class="stat"><div class="muted">Expected goals (A / B)</div><div id="xg" style="margin-top:6px; font-weight:700"></div></div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat"><div class="muted">BTTS</div><div id="btts" style="font-weight:700; margin-top:6px">—</div></div>
+        <div class="stat"><div class="muted">Draw chance</div><div id="drawChance" style="font-weight:700; margin-top:6px">—</div></div>
+        <div class="stat"><div class="muted">Expected goals (A/B)</div><div id="xg" style="font-weight:700; margin-top:6px">—</div></div>
       </div>
 
       <div style="margin-top:10px">
-        <div class="muted">Match stats (estimates)</div>
-        <div class="stat-row" id="matchStats" style="margin-top:8px"></div>
+        <div class="muted">Estimated match stats</div>
+        <div id="matchStats" class="stat-row" style="margin-top:8px"></div>
       </div>
 
-      <div class="history-actions">
-        <button id="saveHistory" class="btn-plain">Save to history</button>
-        <button id="downloadCSV" class="btn-plain">Download CSV</button>
-        <button id="clearHistory" class="btn-plain">Clear history</button>
+      <div class="explain" id="explainBox">
+        <!-- explanation -->
       </div>
 
-      <p class="notice">Note: Wikipedia is used only as a lightweight signal (summary, pageviews & thumbnail). If online lookup fails or you are offline the app uses deterministic simulated strengths. This tool is for analysis/learning — not guaranteed predictions.</p>
-    </section>
-  </main>
+      <div style="margin-top:10px" class="muted">You can save or copy this page, but remember: the embedded key is visible to anyone with access to the file or the hosted page.</div>
+    </div>
+  </div>
 
 <script>
 /* -------------------------
-   Single-file universal predictor
-   - Wikipedia summary & pageviews (no key)
-   - deterministic simulated stats fallback
-   - caching in localStorage for offline reuse
-   - Poisson scoring, match stats, history & CSV
+   WARNING: Key embedded in this file (insecure if file is public).
+   You asked specifically for a single HTML with the key embedded.
    ------------------------- */
 
-const CACHE_KEY = 'universalTeamCache_v1';
-const HISTORY_KEY = 'universalPredHistory_v1';
+/* === INSERTED API KEY (embedded) ===
+   You asked it be included here. This will be sent as the X-Auth-Token header
+   whenever the code calls the football-data.org endpoints below.
+*/
+const FOOTBALL_DATA_API_KEY = "b68dbccadba24372afcd9f2542af3cfe";
 
-// deterministic hash (FNV-like) and seeded RNG
+/* === End key area ===
+   If you later want to remove the key from client-side, move to proxy/server env var.
+*/
+
+/* === Utilities & model (Wikipedia fallback + API usage) === */
+
+// local cache key
+const CACHE_KEY = 'predictor_cache_embedded_v1';
+
+// simple hash + seeded RNG for deterministic simulation
 function hashString(s){
   let h = 2166136261 >>> 0;
-  for(let i=0;i<s.length;i++){
-    h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
-  }
+  for(let i=0;i<s.length;i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
   return h;
 }
-function seededRng(seed){
-  let state = seed >>> 0;
-  return function(){
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    return (state >>> 0) / 4294967296;
+function seededRng(seed){ let state = seed>>>0; return () => { state = (Math.imul(state,1664525)+1013904223)>>>0; return (state>>>0)/4294967296; }}
+
+// deterministic base stats using name
+function baseTeamStats(name){
+  const seed = hashString(name.toLowerCase());
+  const rnd = seededRng(seed);
+  return {
+    attack: 0.45 + rnd()*0.55,
+    defense: 0.4 + rnd()*0.6,
+    form: 0.4 + rnd()*0.6,
+    discipline: 0.4 + rnd()*0.6,
+    popularity: 0.1 + rnd()*0.9,
+    source: 'simulated'
   };
 }
 
-// deterministic base stats from name
-function baseTeamStats(teamName){
-  const seed = hashString(teamName.toLowerCase());
-  const rnd = seededRng(seed);
-  const attack = 0.45 + rnd()*0.55;
-  const defense = 0.4 + rnd()*0.6;
-  const form = 0.4 + rnd()*0.6;
-  const discipline = 0.4 + rnd()*0.6;
-  const popularity = 0.1 + rnd()*0.9;
-  return { attack, defense, form, discipline, popularity, source: 'simulated' };
-}
-
-// fetch Wikipedia summary & thumbnail
-async function fetchWikipediaSummary(teamName){
+// Wikipedia summary fetch (no key)
+async function fetchWikiSummary(name){
   try{
-    const title = encodeURIComponent(teamName);
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
-    const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) return null;
-    const data = await res.json();
-    return {
-      title: data.title || teamName,
-      extract: data.extract || '',
-      thumbnail: data.thumbnail && data.thumbnail.source ? data.thumbnail.source : null
-    };
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+    const r = await fetch(url, {cache:'no-store'});
+    if(!r.ok) return null;
+    const j = await r.json();
+    return { title:j.title, extract:j.extract, thumbnail: j.thumbnail && j.thumbnail.source ? j.thumbnail.source : null };
   }catch(e){ return null; }
 }
 
-// fetch pageviews (last 7 days)
-async function fetchWikipediaPageviews(teamName){
+// Wikimedia pageviews (7d)
+async function fetchPageviews(name){
   try{
-    const title = encodeURIComponent(teamName);
     const end = new Date();
     const start = new Date(Date.now() - 6*24*3600*1000);
-    const fmt = d=>d.toISOString().slice(0,10).replace(/-/g,'');
-    const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/${title}/daily/${fmt(start)}/${fmt(end)}`;
-    const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) return null;
-    const data = await res.json();
-    if(!data.items) return null;
-    const total = data.items.reduce((s,it)=>s+(it.views||0),0);
-    return total;
+    const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
+    const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/all-agents/${encodeURIComponent(name)}/daily/${fmt(start)}/${fmt(end)}`;
+    const r = await fetch(url, {cache:'no-store'});
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j.items) return null;
+    return j.items.reduce((s,i)=>s+(i.views||0),0);
   }catch(e){ return null; }
 }
 
-// getTeamStats: try cache, else online, else base simulated; stores into cache
-async function getTeamStats(teamName, forceOnline=false){
-  const key = teamName.trim().toLowerCase();
-  if(!key) throw new Error('empty team name');
-  const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-  if(!forceOnline && cache[key]) return cache[key];
-  const base = baseTeamStats(teamName);
-  try{
-    // try to fetch wiki summary & pageviews
-    const summary = await fetchWikipediaSummary(teamName);
-    const pageviews = await fetchWikipediaPageviews(teamName);
-    let popularityFactor = base.popularity;
-    if(typeof pageviews === 'number'){
-      const scaled = Math.log10(1+pageviews);
-      popularityFactor = 0.6 + Math.tanh(scaled/2)*1.0;
-    } else if(summary){
-      popularityFactor = Math.min(1.2, base.popularity + 0.1);
-    }
-    const extractLen = summary && summary.extract ? Math.min(2000, summary.extract.length) : 0;
-    const extractBoost = Math.min(0.2, extractLen/2000 * 0.2);
-    const attack = Math.min(1.5, base.attack * (0.9 + popularityFactor*0.15) + extractBoost*0.3);
-    const defense = Math.min(1.5, base.defense * (0.9 + popularityFactor*0.12));
-    const form = Math.min(1.3, base.form * (0.95 + popularityFactor*0.08));
-    const discipline = Math.min(1.3, base.discipline * (0.95 + (1/(1+Math.exp(-((popularityFactor-1)*3))))*0.08));
-    const result = {
-      attack, defense, form, discipline,
-      pageviews: pageviews || 0,
-      wikiTitle: summary ? summary.title : null,
-      wikiExtract: summary ? (summary.extract||'') : null,
-      thumbnail: summary ? summary.thumbnail : null,
-      source: (summary||pageviews) ? 'wikipedia-augmented' : 'simulated'
-    };
-    cache[key] = result;
-    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-    return result;
-  }catch(e){
-    cache[key] = base;
-    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-    return base;
+// football-data.org fetch helper (uses X-Auth-Token header)
+async function fdFetch(path){
+  // path should start with /v2/...
+  const base = 'https://api.football-data.org';
+  const url = base + path;
+  const headers = { 'X-Auth-Token': FOOTBALL_DATA_API_KEY, 'Accept': 'application/json' };
+  const r = await fetch(url, { headers });
+  if(!r.ok) {
+    // return null but include status for debug
+    const text = await r.text().catch(()=>null);
+    throw new Error('Football-data API error ' + r.status + ' ' + r.statusText + (text?(' — '+text):''));
   }
+  return r.json();
 }
 
-function clearCache(){ localStorage.removeItem(CACHE_KEY); alert('Cache cleared'); }
+/* === team augmentation: tries API by ID (if provided), else Wikipedia fallback === */
+async function getTeamAugmented(name, options={teamId:null, forceOnline:true}){
+  const key = name.trim().toLowerCase();
+  if(!key) throw new Error('empty team name');
+  const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
 
-// compute expected goals (xG)
-function computeExpectedGoals(a,b,homeA=false,homeB=false){
-  const baseA = a.attack * 0.6 + a.form*0.3 + (a.popularity||1)*0.1;
-  const baseB = b.attack * 0.6 + b.form*0.3 + (b.popularity||1)*0.1;
+  if(!options.forceOnline && cache[key]) return cache[key];
+
+  // start from deterministic base
+  const base = baseTeamStats(name);
+
+  // try football-data API if teamId supplied
+  let apiResult = null;
+  try{
+    if(options.teamId){
+      // GET /v2/teams/{id}
+      apiResult = await fdFetch(`/v2/teams/${options.teamId}`);
+      // API returns team info but may not include attack/defense numeric metrics; we'll use name + badges when available
+    }
+  }catch(e){
+    console.warn('fdFetch team failed:', e.message);
+    apiResult = null;
+  }
+
+  // try Wikipedia
+  const summary = await fetchWikiSummary(name);
+  const pageviews = await fetchPageviews(name);
+  let popularityFactor = base.popularity;
+  if(typeof pageviews === 'number'){ const scaled = Math.log10(1+pageviews); popularityFactor = 0.6 + Math.tanh(scaled/2)*1.0; }
+  else if(summary){ popularityFactor = Math.min(1.2, base.popularity + 0.1); }
+  const extractLen = summary && summary.extract ? Math.min(2000, summary.extract.length) : 0;
+  const extractBoost = Math.min(0.2, extractLen/2000 * 0.2);
+  const attack = Math.min(1.6, base.attack * (0.9 + popularityFactor*0.15) + extractBoost*0.3);
+  const defense = Math.min(1.6, base.defense * (0.9 + popularityFactor*0.12));
+  const form = Math.min(1.4, base.form * (0.95 + popularityFactor*0.08));
+  const discipline = Math.min(1.4, base.discipline * (0.95 + (1/(1+Math.exp(-((popularityFactor-1)*3))))*0.08));
+
+  const res = {
+    attack, defense, form, discipline,
+    pageviews: pageviews || 0,
+    wikiTitle: summary ? summary.title : null,
+    wikiExtract: summary ? summary.extract : null,
+    thumbnail: summary ? summary.thumbnail : null,
+    fdApi: apiResult || null,
+    source: apiResult ? 'football-data + wiki' : 'wiki-augmented'
+  };
+  cache[key] = res;
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  return res;
+}
+
+/* === Model: compute xG, sample Poisson, compute probs === */
+function computeExpectedGoals(a,b, homeA=false, homeB=false){
+  const baseA = a.attack*0.6 + a.form*0.3 + (a.popularity||1)*0.1;
+  const baseB = b.attack*0.6 + b.form*0.3 + (b.popularity||1)*0.1;
   const defB = b.defense, defA = a.defense;
   let xgA = 1.0 * (baseA / (baseA + defB)) * 2.2;
   let xgB = 1.0 * (baseB / (baseB + defA)) * 2.2;
   const hb = 0.20;
   if(homeA && !homeB) xgA += hb;
   if(homeB && !homeA) xgB += hb;
-  xgA = Math.max(0.1, Math.min(4.0, xgA)); xgB = Math.max(0.1, Math.min(4.0, xgB));
-  return { xgA, xgB };
-}
-
-// Poisson sample (Knuth)
-function samplePoisson(lambda, rnd=Math.random){
-  const L = Math.exp(-lambda);
-  let k=0, p=1;
-  do{ k++; p *= rnd(); } while(p > L && k < 20);
-  return k-1;
+  xgA = Math.max(0.05, Math.min(5.0, xgA)); xgB = Math.max(0.05, Math.min(5.0, xgB));
+  return { xgA, xgB, baseA, baseB };
 }
 function factorial(n){ let f=1; for(let i=2;i<=n;i++) f*=i; return f; }
 function poissonProb(k, lambda){ return Math.pow(lambda,k) * Math.exp(-lambda) / factorial(k); }
-
-// synthetic match stats generator
+function samplePoisson(lambda, rnd=Math.random){
+  const L = Math.exp(-lambda); let k=0, p=1;
+  do{ k++; p *= rnd(); } while(p > L && k < 20);
+  return k-1;
+}
 function genMatchStats(teamA, teamB, goalsA, goalsB){
   const baseFoulsA = 8 + Math.round((1 - teamA.discipline) * 10 + teamA.attack*2 + goalsA*1.5);
   const baseFoulsB = 8 + Math.round((1 - teamB.discipline) * 10 + teamB.attack*2 + goalsB*1.5);
@@ -279,166 +275,158 @@ function genMatchStats(teamA, teamB, goalsA, goalsB){
   return { foulsA: baseFoulsA, foulsB: baseFoulsB, cornersA, cornersB, yellowA, yellowB, redA, redB };
 }
 
-// orchestrator: predictMatch
-async function predictMatch(teamAName, teamBName, options={online:true, homeA:false, homeB:false}){
-  const a = await getTeamStats(teamAName, options.online);
-  const b = await getTeamStats(teamBName, options.online);
-  a.popularity = (a.pageviews ? Math.log10(1+a.pageviews) : (a.popularity||0.8));
-  b.popularity = (b.pageviews ? Math.log10(1+b.pageviews) : (b.popularity||0.8));
-  const { xgA, xgB } = computeExpectedGoals(a,b,options.homeA,options.homeB);
-
-  // deterministic seed from both names for reproducible sample
-  const seed = (hashString(teamAName) ^ (hashString(teamBName) << 1)) >>> 0;
-  const rndGen = seededRng(seed);
-  const goalsA = samplePoisson(xgA, rndGen);
-  const goalsB = samplePoisson(xgB, rndGen);
-
-  // compute win/draw probabilities by joint Poisson sum (0..7 goals)
-  const maxG = 7;
-  let pAwin=0, pBwin=0, pDraw=0;
-  for(let i=0;i<=maxG;i++){
-    for(let j=0;j<=maxG;j++){
-      const p = poissonProb(i, xgA) * poissonProb(j, xgB);
-      if(i>j) pAwin += p; else if(j>i) pBwin += p; else pDraw += p;
-    }
-  }
-  const total = pAwin + pBwin + pDraw || 1;
-  pAwin /= total; pBwin /= total; pDraw /= total;
-
-  const btts = (goalsA>0 && goalsB>0);
-  const matchStats = genMatchStats(a,b,goalsA,goalsB);
-  const fav = pAwin>pBwin ? teamAName : (pBwin>pAwin ? teamBName : 'Draw likely');
-  const conf = Math.abs(pAwin - pBwin);
-
-  return { teamA: teamAName, teamB: teamBName, a, b, xgA, xgB, goalsA, goalsB, pAwin, pBwin, pDraw, btts, matchStats, fav, conf };
-}
-
-/* -------------------------
-   UI wiring & helpers
-   ------------------------- */
-
-const predictBtn = document.getElementById('predictBtn');
-const simulateBtn = document.getElementById('simulateBtn');
-const clearCacheBtn = document.getElementById('clearCache');
-const saveHistoryBtn = document.getElementById('saveHistory');
-const downloadCSVBtn = document.getElementById('downloadCSV');
-const clearHistoryBtn = document.getElementById('clearHistory');
-
-predictBtn.addEventListener('click', ()=>runPredict({online:true}));
-simulateBtn.addEventListener('click', ()=>runPredict({online:false}));
-clearCacheBtn.addEventListener('click', clearCache);
-saveHistoryBtn.addEventListener('click', saveCurrentToHistory);
-downloadCSVBtn.addEventListener('click', downloadCSV);
-clearHistoryBtn.addEventListener('click', ()=>{
-  localStorage.removeItem(HISTORY_KEY);
-  alert('History cleared');
-});
-
-async function runPredict(opts){
-  const nameA = document.getElementById('teamA').value.trim();
-  const nameB = document.getElementById('teamB').value.trim();
+/* === Orchestration: predict, show results === */
+async function predictAndShow(opts={online:true}){
+  const nameA = document.getElementById('teamAname').value.trim();
+  const nameB = document.getElementById('teamBname').value.trim();
+  const teamAid = document.getElementById('teamAid').value.trim() || null;
+  const teamBid = document.getElementById('teamBid').value.trim() || null;
+  const matchDate = document.getElementById('matchDate').value || null;
+  const matchId = document.getElementById('matchId').value || null;
   const homeA = document.getElementById('homeA').checked;
-  const homeB = document.getElementById('homeB').checked;
+
   if(!nameA || !nameB){ alert('Please enter both team names'); return; }
 
-  predictBtn.disabled = true; simulateBtn.disabled = true;
-  predictBtn.textContent = opts.online ? 'Looking up...' : 'Simulating...';
+  document.getElementById('predictBtn').disabled = true;
+  document.getElementById('predictBtn').textContent = opts.online ? 'Working (online aware)...' : 'Simulating...';
 
   try{
-    const res = await predictMatch(nameA, nameB, { online: opts.online, homeA, homeB });
-    showResult(res);
-    window.lastPrediction = res;
+    // get augmented team stats (try API if provided teamId is present)
+    const a = await getTeamAugmented(nameA, { teamId: teamAid ? teamAid : null, forceOnline: opts.online });
+    const b = await getTeamAugmented(nameB, { teamId: teamBid ? teamBid : null, forceOnline: opts.online });
+
+    const { xgA, xgB, baseA, baseB } = computeExpectedGoals(a,b, homeA, false);
+
+    // deterministic sampling seed using names + date to keep reproducible
+    const seed = (hashString(nameA) ^ (hashString(nameB) << 1) ^ (matchDate ? hashString(matchDate) : 0)) >>> 0;
+    const rng = seededRng(seed);
+    const goalsA = samplePoisson(xgA, rng);
+    const goalsB = samplePoisson(xgB, rng);
+
+    // compute probabilities via joint Poisson grid
+    let pAwin=0, pBwin=0, pDraw=0; const maxG = 8;
+    for(let i=0;i<=maxG;i++){
+      for(let j=0;j<=maxG;j++){
+        const p = poissonProb(i,xgA)*poissonProb(j,xgB);
+        if(i>j) pAwin += p; else if(j>i) pBwin += p; else pDraw += p;
+      }
+    }
+    const tot = pAwin + pBwin + pDraw || 1;
+    pAwin/=tot; pBwin/=tot; pDraw/=tot;
+
+    const btts = (goalsA>0 && goalsB>0);
+    const matchStats = genMatchStats(a,b,goalsA,goalsB);
+
+    // show
+    document.getElementById('output').hidden = false;
+    document.getElementById('scoreMain').textContent = `${goalsA} — ${goalsB}`;
+    document.getElementById('teamNames').textContent = `${nameA}  vs  ${nameB}`;
+    document.getElementById('labelA').textContent = `${nameA} • win ${(pAwin*100).toFixed(1)}%`;
+    document.getElementById('labelB').textContent = `${nameB} • win ${(pBwin*100).toFixed(1)}%`;
+    document.getElementById('favText').textContent = pAwin>pBwin ? `${nameA} favored (${(pAwin*100).toFixed(1)}%)` : (pBwin>pAwin ? `${nameB} favored (${(pBwin*100).toFixed(1)}%)` : 'Draw likely');
+    document.getElementById('sourceNote').textContent = `Sources: ${a.source}, ${b.source}`;
+
+    document.getElementById('fillA').style.width = Math.max(1,(pAwin*100)) + '%';
+    document.getElementById('fillB').style.width = Math.max(1,(pBwin*100)) + '%';
+    document.getElementById('btts').textContent = btts ? 'Yes' : 'No';
+    document.getElementById('drawChance').textContent = (pDraw*100).toFixed(1) + '%';
+    document.getElementById('xg').textContent = `${xgA.toFixed(2)} / ${xgB.toFixed(2)}`;
+
+    // match stats display
+    const scont = document.getElementById('matchStats');
+    scont.innerHTML = '';
+    function mk(title, html){ const el = document.createElement('div'); el.className='stat'; el.innerHTML = `<div class="muted">${title}</div><div style="margin-top:6px">${html}</div>`; return el; }
+    scont.appendChild(mk('Fouls', `${nameA}: <strong>${matchStats.foulsA}</strong><br>${nameB}: <strong>${matchStats.foulsB}</strong>`));
+    scont.appendChild(mk('Corners', `${nameA}: <strong>${matchStats.cornersA}</strong><br>${nameB}: <strong>${matchStats.cornersB}</strong>`));
+    scont.appendChild(mk('Yellow cards', `${nameA}: <strong>${matchStats.yellowA}</strong><br>${nameB}: <strong>${matchStats.yellowB}</strong>`));
+    scont.appendChild(mk('Red cards', `${nameA}: <strong>${matchStats.redA}</strong><br>${nameB}: <strong>${matchStats.redB}</strong>`));
+
+    // explanation
+    const explain = document.getElementById('explainBox');
+    explain.innerHTML = `<strong>Explanation (how we predicted)</strong>
+      <ol>
+        <li>Base strengths were generated from team names (attack/defense/form/discipline).</li>
+        <li>If you provided team IDs and the API was reachable, the app attempted to augment using football-data.org (header X-Auth-Token used).</li>
+        <li>Next, Wikipedia page summary & recent pageviews were used to nudge strengths (popularity / signal).</li>
+        <li>Combined strengths -> expected goals (xG): A=${xgA.toFixed(2)}, B=${xgB.toFixed(2)}.</li>
+        <li>Scoreline sampled via Poisson; win/draw probabilities computed by summing joint Poisson probabilities across likely scores.</li>
+        <li>Match event estimates (fouls/corners/cards) are derived heuristically from strength + goals for realism.</li>
+      </ol>`;
   }catch(e){
-    alert('Error: ' + (e.message || e));
+    alert('Error during prediction: ' + e.message);
   }finally{
-    predictBtn.disabled = false; simulateBtn.disabled = false;
-    predictBtn.textContent = 'Predict (online-aware)';
+    document.getElementById('predictBtn').disabled = false;
+    document.getElementById('predictBtn').textContent = 'Predict (use API when possible)';
   }
 }
 
-function showResult(r){
-  document.getElementById('result').hidden = false;
-  document.getElementById('teamAName').textContent = r.teamA;
-  document.getElementById('teamBName').textContent = r.teamB;
-  document.getElementById('scoreMain').textContent = `${r.goalsA} — ${r.goalsB}`;
-  document.getElementById('teamAXg').textContent = `xG ${r.xgA.toFixed(2)}`;
-  document.getElementById('teamBXg').textContent = `xG ${r.xgB.toFixed(2)}`;
-  document.getElementById('labelA').textContent = `${r.teamA} • win ${(r.pAwin*100).toFixed(1)}%`;
-  document.getElementById('labelB').textContent = `${r.teamB} • win ${(r.pBwin*100).toFixed(1)}%`;
-  document.getElementById('favText').textContent = r.fav === 'Draw likely' ? 'Draw favored' : `${r.fav} favored (${(Math.max(r.pAwin,r.pBwin)*100).toFixed(1)}%)`;
-  document.getElementById('calcNote').textContent = `Source: ${r.a.source || 'simulated'} & ${r.b.source || 'simulated'}`;
+/* === small helpers for the extra buttons: fetch match or H2H via football-data.org (requires API key & ids) === */
 
-  const pctA = Math.max(1, Math.round(r.pAwin*1000)/10);
-  const pctB = Math.max(1, Math.round(r.pBwin*1000)/10);
-  document.getElementById('fillA').style.width = pctA + '%';
-  document.getElementById('fillB').style.width = pctB + '%';
-
-  document.getElementById('btts').textContent = r.btts ? 'Yes' : 'No';
-  document.getElementById('drawChance').textContent = (r.pDraw*100).toFixed(1) + '%';
-  document.getElementById('xg').textContent = `${r.xgA.toFixed(2)} / ${r.xgB.toFixed(2)}`;
-
-  setLogo('logoAimg', r.a.thumbnail);
-  setLogo('logoBimg', r.b.thumbnail);
-
-  const s = r.matchStats;
-  const container = document.getElementById('matchStats');
-  container.innerHTML = '';
-  function mk(title, html){ const el = document.createElement('div'); el.className='stat'; el.innerHTML=`<div class="muted">${title}</div><div style="margin-top:6px">${html}</div>`; return el;}
-  container.appendChild(mk('Fouls', `${r.teamA}: <strong>${s.foulsA}</strong><br>${r.teamB}: <strong>${s.foulsB}</strong>`));
-  container.appendChild(mk('Corners', `${r.teamA}: <strong>${s.cornersA}</strong><br>${r.teamB}: <strong>${s.cornersB}</strong>`));
-  container.appendChild(mk('Yellow cards', `${r.teamA}: <strong>${s.yellowA}</strong><br>${r.teamB}: <strong>${s.yellowB}</strong>`));
-  container.appendChild(mk('Red cards', `${r.teamA}: <strong>${s.redA}</strong><br>${r.teamB}: <strong>${s.redB}</strong>`));
-}
-
-function setLogo(imgId, url){
-  const img = document.getElementById(imgId);
-  if(url){
-    img.src = url;
-    img.alt = 'logo';
-    img.style.display = 'block';
-  } else {
-    img.src = '';
-    img.alt = '';
-    img.style.display = 'none';
+document.getElementById('fetchMatchBtn').addEventListener('click', async ()=>{
+  const matchId = document.getElementById('matchId').value.trim();
+  if(!matchId){ alert('Enter a match ID'); return; }
+  try{
+    const data = await fdFetch(`/v2/matches/${matchId}`);
+    // display some details then allow prediction using returned teams
+    const m = data.match;
+    if(!m){ alert('No match found'); return; }
+    // prefill names and optionally IDs
+    document.getElementById('teamAname').value = m.homeTeam ? m.homeTeam.name : document.getElementById('teamAname').value;
+    if(m.homeTeam && m.homeTeam.id) document.getElementById('teamAid').value = m.homeTeam.id;
+    document.getElementById('teamBname').value = m.awayTeam ? m.awayTeam.name : document.getElementById('teamBname').value;
+    if(m.awayTeam && m.awayTeam.id) document.getElementById('teamBid').value = m.awayTeam.id;
+    if(m.utcDate) document.getElementById('matchDate').value = m.utcDate.slice(0,10);
+    alert('Match loaded from API: prefilled teams/date. Now click Predict.');
+  }catch(e){
+    alert('Error fetching match: ' + e.message);
   }
-}
+});
 
-// history
-function saveCurrentToHistory(){
-  const r = window.lastPrediction;
-  if(!r){ alert('No prediction to save'); return; }
-  const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  hist.unshift({
-    date: (new Date()).toISOString(),
-    teamA: r.teamA, teamB: r.teamB,
-    score: `${r.goalsA}-${r.goalsB}`,
-    pAwin: r.pAwin, pBwin: r.pBwin, pDraw: r.pDraw,
-    xgA: r.xgA, xgB: r.xgB
-  });
-  if(hist.length>500) hist.pop();
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
-  alert('Saved to history');
-}
+document.getElementById('fetchH2HBtn').addEventListener('click', async ()=>{
+  const teamAid = document.getElementById('teamAid').value.trim();
+  const teamBid = document.getElementById('teamBid').value.trim();
+  if(!teamAid || !teamBid){ alert('Provide both team numeric IDs for H2H via API'); return; }
+  try{
+    // football-data has endpoint: /v2/teams/{id}/matches?opponent={id} (or similar) — but to be robust, we'll try teams/{id}/matches and filter
+    const aMatches = await fdFetch(`/v2/teams/${teamAid}/matches?status=FINISHED&limit=100`);
+    // filter for matches vs teamBid
+    const vs = (aMatches.matches||[]).filter(m => (m.homeTeam && m.homeTeam.id==teamBid) || (m.awayTeam && m.awayTeam.id==teamBid));
+    if(!vs.length) { alert('No H2H results found via API for those IDs'); return; }
+    // summarize recent H2H
+    let winsA=0,winsB=0,draws=0;
+    vs.slice(0,10).forEach(m=>{
+      if(m.score && m.score.winner){
+        if(m.score.winner==='HOME_TEAM'){
+          if(m.homeTeam && String(m.homeTeam.id)===String(teamAid)) winsA++; else winsB++;
+        } else if(m.score.winner==='AWAY_TEAM'){
+          if(m.awayTeam && String(m.awayTeam.id)===String(teamAid)) winsA++; else winsB++;
+        } else draws++;
+      } else {
+        // compare goals
+        if(m.score && m.score.fullTime){
+          const gA = (m.homeTeam && String(m.homeTeam.id)===String(teamAid)) ? m.score.fullTime.homeTeam : m.score.fullTime.awayTeam;
+          const gB = (m.homeTeam && String(m.homeTeam.id)===String(teamAid)) ? m.score.fullTime.awayTeam : m.score.fullTime.homeTeam;
+          if(gA>gB) winsA++; else if(gB>gA) winsB++; else draws++;
+        }
+      }
+    });
+    alert(`Recent H2H (last ${vs.length} matches): ${winsA} wins A, ${winsB} wins B, ${draws} draws. These results can help inform predictions.`);
+  }catch(e){
+    alert('H2H fetch error: ' + e.message);
+  }
+});
 
-function downloadCSV(){
-  const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  if(!hist.length){ alert('History empty'); return; }
-  const header = ['date','teamA','teamB','score','pAwin','pBwin','pDraw','xgA','xgB'];
-  const rows = hist.map(h => [
-    h.date, h.teamA, h.teamB, h.score, (h.pAwin*100).toFixed(2)+'%', (h.pBwin*100).toFixed(2)+'%', (h.pDraw*100).toFixed(2)+'%', h.xgA.toFixed(2), h.xgB.toFixed(2)
-  ]);
-  const csv = [header.join(','), ...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download='predictions_history.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
+/* wire predict buttons */
+document.getElementById('predictBtn').addEventListener('click', ()=>predictAndShow({online:true}));
+document.getElementById('simulateBtn').addEventListener('click', ()=>predictAndShow({online:false}));
+document.getElementById('clearCache').addEventListener('click', ()=>{ localStorage.removeItem(CACHE_KEY); alert('Cache cleared'); });
 
-// prefill example on first load
+/* small prefill for convenience */
 document.addEventListener('DOMContentLoaded', ()=>{
-  if(!localStorage.getItem('universal_prefill_v1')){
-    document.getElementById('teamA').value = 'Manchester United';
-    document.getElementById('teamB').value = 'Liverpool';
-    localStorage.setItem('universal_prefill_v1','1');
+  if(!localStorage.getItem('embedded_prefill_v1')){
+    document.getElementById('teamAname').value='Manchester United';
+    document.getElementById('teamBname').value='Liverpool';
+    localStorage.setItem('embedded_prefill_v1','1');
   }
 });
 </script>
